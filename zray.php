@@ -13,18 +13,44 @@ class CakePHP
         $this->zre = $zre;
     }
 
+    /**
+     * Capture data before a request is dispatched.
+     */
     public function beforeRun($context, &$storage)
     {
         $this->collectPlugins($storage);
         $this->collectConfigureData($storage);
     }
 
+    /**
+     * Capture data after a request is dispatched.
+     */
     public function afterRun($context, &$storage)
     {
         $request = $context['functionArgs'][0];
         $response = $context['functionArgs'][1];
         $this->collectRequest($request, $storage);
         $this->collectResponse($response, $storage);
+    }
+
+    /**
+     * Capture data for each event triggered
+     */
+    public function afterEvent($context, &$storage)
+    {
+        $event = $context['functionArgs'][0];
+        if (is_string($event)) {
+            $data = [
+                'name' => $event
+            ];
+        } else {
+            $data = [
+                'name' => $event->name(),
+                'subject' => $event->subject(),
+                'data' => $event->data(),
+            ];
+        }
+        $storage['events'][] = $event;
     }
 
     protected function collectPlugins(&$storage)
@@ -70,6 +96,11 @@ $zre->setMetadata(array(
 ));
 
 $zre->setEnabledAfter('Cake\Routing\DispatcherFactory::create');
+$zre->traceFunction(
+    'Cake\Event\EventManager::dispatch',
+    function () {},
+    array($zrayCake, 'afterEvent')
+);
 $zre->traceFunction(
     'Cake\Routing\Dispatcher::dispatch',
     array($zrayCake, 'beforeRun'),
