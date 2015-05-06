@@ -46,11 +46,33 @@ class CakePHP
         } else {
             $data = [
                 'name' => $event->name(),
-                'subject' => $event->subject(),
-                'data' => $event->data(),
+                'subject' => get_class($event->subject()),
             ];
         }
-        // $storage['events'][] = $event;
+        $data['memory'] = $this->formatSizeUnits(memory_get_usage(true));
+        $data['time'] = $this->formatTime($context['durationInclusive']) . 'ms';
+        $storage['events'][] = $data;
+    }
+
+    protected function formatSizeUnits($bytes) {
+        if ($bytes >= 1073741824) {
+            $bytes = number_format ( $bytes / 1073741824, 2 ) . ' GB';
+        } elseif ($bytes >= 1048576) {
+            $bytes = number_format ( $bytes / 1048576, 2 ) . ' MB';
+        } elseif ($bytes >= 1024) {
+            $bytes = number_format ( $bytes / 1024, 2 ) . ' KB';
+        } elseif ($bytes > 1) {
+            $bytes = $bytes . ' bytes';
+        } elseif ($bytes == 1) {
+            $bytes = $bytes . ' byte';
+        } else {
+            $bytes = '0 bytes';
+        }
+        return $bytes;
+    }
+
+    protected function formatTime($ms) {
+        return floor($ms / 1000);
     }
 
     protected function collectPlugins(&$storage)
