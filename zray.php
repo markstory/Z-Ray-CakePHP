@@ -50,12 +50,19 @@ class CakePHP
                 'data' => $event->data(),
             ];
         }
-        $storage['events'][] = $event;
+        // $storage['events'][] = $event;
     }
 
     protected function collectPlugins(&$storage)
     {
-        $storage['plugins'] = Plugin::loaded();
+        foreach (Plugin::loaded() as $plugin) {
+            $storage['plugins'][] = [
+                'name' => $plugin,
+                'path' => Plugin::path($plugin),
+                'class path' => Plugin::classPath($plugin),
+                'config path' => Plugin::configPath($plugin),
+            ];
+        }
     }
 
     /**
@@ -63,23 +70,24 @@ class CakePHP
      */
     protected function collectConfigureData(&$storage)
     {
-        $data = Configure::read();
-        $storage['configure'] = $data;
+        $storage['configure'] = Configure::read();
     }
 
     protected function collectRequest($request, &$storage)
     {
-        $storage['request'][] = [
+        $storage['request']['Request'] = [
             'plugin' => $request->param('plugin'),
             'controller' => $request->param('controller'),
             'action' => $request->param('action'),
+            'passed' => $request->param('pass'),
+            'data' => $request->data,
             'content type' => $request->contentType(),
         ];
     }
 
     protected function collectResponse($response, &$storage)
     {
-        $storage['request'][] = [
+        $storage['request']['Response'] = [
             'status' => $response->statusCode(),
             'headers' => $response->header(),
             'content type' => $response->type(),
