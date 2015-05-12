@@ -120,11 +120,20 @@ class CakePHP
 
     protected function collectCake(&$storage)
     {
-        $storage['Cake'][] = ['name' => 'Application Path', 'value' => APP];
-        $storage['Cake'][] = ['name' => 'Config Path', 'value' => CONFIG];
-        $storage['Cake'][] = ['name' => 'Temp Path', 'value' => TMP];
-        $storage['Cake'][] = ['name' => 'Logs Path', 'value' => LOGS];
-        $storage['Cake'][] = ['name' => 'Cake Version', 'value' => Configure::version()];
+        $storage['cake'][] = ['name' => 'Application Path', 'value' => APP];
+        $storage['cake'][] = ['name' => 'Config Path', 'value' => CONFIG];
+        $storage['cake'][] = ['name' => 'Temp Path', 'value' => TMP];
+        $storage['cake'][] = ['name' => 'Logs Path', 'value' => LOGS];
+        $storage['cake'][] = ['name' => 'Cake Version', 'value' => Configure::version()];
+    }
+
+    public function afterRender($context, &$storage)
+    {
+        $viewFile = $context['functionArgs'][0];
+        $data = [
+            'view file' => $viewFile,
+        ];
+        $storage['views'][] = $data;
     }
 }
 
@@ -137,12 +146,19 @@ $zre->setMetadata(array(
 
 $zre->setEnabledAfter('Cake\Routing\DispatcherFactory::create');
 $zre->traceFunction(
-    'Cake\Event\EventManager::dispatch',
-    function () {},
-    array($zrayCake, 'afterEvent')
-);
-$zre->traceFunction(
     'Cake\Routing\Dispatcher::dispatch',
     array($zrayCake, 'beforeRun'),
     array($zrayCake, 'afterRun')
 );
+$zre->traceFunction(
+    'Cake\Event\EventManager::dispatch',
+    function () {},
+    array($zrayCake, 'afterEvent')
+);
+/* Enabling this makes all the non-event data disappear :(
+$zre->traceFunction(
+    'Cake\View\View::_render',
+    function () {},
+    array($zrayCake, 'afterRender')
+);
+*/
