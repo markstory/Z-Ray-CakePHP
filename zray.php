@@ -31,6 +31,7 @@ class CakePHP
         $response = $context['functionArgs'][1];
         $this->collectRequest($request, $storage);
         $this->collectResponse($response, $storage);
+        $this->collectCake($storage);
     }
 
     /**
@@ -115,6 +116,15 @@ class CakePHP
             'content type' => $response->type(),
             'contents' => $response->body(),
         ];
+    }
+
+    protected function collectCake(&$storage)
+    {
+        $storage['Cake'][] = ['name' => 'Application Path', 'value' => APP];
+        $storage['Cake'][] = ['name' => 'Config Path', 'value' => CONFIG];
+        $storage['Cake'][] = ['name' => 'Temp Path', 'value' => TMP];
+        $storage['Cake'][] = ['name' => 'Logs Path', 'value' => LOGS];
+        $storage['Cake'][] = ['name' => 'Cake Version', 'value' => Configure::version()];
     }
 }
 
