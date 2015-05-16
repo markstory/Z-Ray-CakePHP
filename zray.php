@@ -3,10 +3,12 @@ namespace ZRay;
 
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
+use Cake\Event\EventManager;
 
 class CakePHP
 {
     protected $zre;
+    protected $views = [];
 
     public function setZRE($zre)
     {
@@ -20,6 +22,7 @@ class CakePHP
     {
         $this->collectPlugins($storage);
         $this->collectConfigureData($storage);
+        $this->setupEvents();
     }
 
     /**
@@ -31,7 +34,8 @@ class CakePHP
         $response = $context['functionArgs'][1];
         $this->collectRequest($request, $storage);
         $this->collectResponse($response, $storage);
-        $this->collectCake($storage);
+        $this->collectEnv($storage);
+        $this->collectViews($storage);
     }
 
     /**
@@ -93,7 +97,7 @@ class CakePHP
      */
     protected function collectConfigureData(&$storage)
     {
-        $storage['configure'] = Configure::read();
+        $storage['configure'][] = Configure::read();
     }
 
     protected function collectRequest($request, &$storage)
@@ -118,22 +122,31 @@ class CakePHP
         ];
     }
 
-    protected function collectCake(&$storage)
+    protected function collectEnv(&$storage)
     {
-        $storage['cake'][] = ['name' => 'Application Path', 'value' => APP];
-        $storage['cake'][] = ['name' => 'Config Path', 'value' => CONFIG];
-        $storage['cake'][] = ['name' => 'Temp Path', 'value' => TMP];
-        $storage['cake'][] = ['name' => 'Logs Path', 'value' => LOGS];
-        $storage['cake'][] = ['name' => 'Cake Version', 'value' => Configure::version()];
+        $storage['Env'][] = ['name' => 'Application Path', 'value' => APP];
+        $storage['Env'][] = ['name' => 'Config Path', 'value' => CONFIG];
+        $storage['Env'][] = ['name' => 'Temp Path', 'value' => TMP];
+        $storage['Env'][] = ['name' => 'Logs Path', 'value' => LOGS];
+        $storage['Env'][] = ['name' => 'Cake Version', 'value' => Configure::version()];
     }
 
-    public function afterRender($context, &$storage)
+    /**
+     * For some reason zray won't trace View::_render() without
+     * corrupting the rest of the data, so we'll use cake's event system
+     * instead.
+     */
+    public function setupEvents()
     {
-        $viewFile = $context['functionArgs'][0];
-        $data = [
-            'view file' => $viewFile,
-        ];
-        $storage['views'][] = $data;
+        $events = EventManager::instance();
+        $events->on('View.beforeRenderFile', function ($event) {
+            $this->views[] = $event->data[0];
+        });
+    }
+
+    public function collectViews(&$storage)
+    {
+        $storage['Views'][] = $this->views;
     }
 }
 
@@ -155,10 +168,3 @@ $zre->traceFunction(
     function () {},
     array($zrayCake, 'afterEvent')
 );
-/* Enabling this makes all the non-event data disappear :(
-$zre->traceFunction(
-    'Cake\View\View::_render',
-    function () {},
-    array($zrayCake, 'afterRender')
-);
-*/
