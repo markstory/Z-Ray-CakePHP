@@ -14,3 +14,7 @@ Example: (assuming default install directory for Zend Server)
 
 You can either copy the files into that location, or clone this repository
 into your zray extensions directory.
+
+## License
+
+This code is provided under the MIT License.
