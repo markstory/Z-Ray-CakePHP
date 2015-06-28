@@ -1,0 +1,19 @@
+language: php
+
+php:
+  - 5.6
+  - 7.0
+
+sudo: false
+
+before_script:
+  - composer self-update
+  - composer install --prefer-dist --no-interaction
+  - phpenv rehash
+  - set +H
+
+script:
+  - sh -c "vendor/bin/phpcs -p --extensions=php --standard=vendor/cakephp/cakephp-codesniffer/CakePHP ."
+
+notifications:
+  email: false

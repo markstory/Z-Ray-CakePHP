@@ -1,0 +1,24 @@
+{
+    "name": "markstory/z-ray-cakephp",
+    "description": "Z-Ray Extension for CakePHP",
+    "type": "library",
+    "keywords": ["zend server", "cakephp", "zray"],
+    "homepage": "https://github.com/markstory/Z-Ray-CakePHP",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Mark Story",
+            "homepage": "http://mark-story.com"
+        }
+    ],
+    "support": {
+        "issues": "https://github.com/markstory/Z-Ray-CakePHP/issues",
+        "source": "https://github.com/markstory/Z-Ray-CakePHP"
+    },
+    "require": {
+        "php": ">=5.4.16",
+    },
+    "require-dev": {
+        "cakephp/cakephp-codesniffer": "dev-master"
+    }
+}
