@@ -154,7 +154,7 @@ $zre = new \ZRayExtension("CakePHP");
 $zrayCake = new CakePHP();
 $zrayCake->setZRE($zre);
 $zre->setMetadata(array(
-    'logo' => __DIR__ . DIRECTORY_SEPARATOR . 'logo.png',
+    'logo' => dirname(__DIR__) . DIRECTORY_SEPARATOR . 'logo.png',
 ));
 
 $zre->setEnabledAfter('Cake\Routing\DispatcherFactory::create');

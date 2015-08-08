@@ -1,0 +1,9 @@
+{
+  "name" : "Z-Ray-CakePHP",
+  "display_name" : "Z-Ray-CakePHP",
+  "version" : "1.0.0",
+  "type": ["zray"],
+  "logo": "logo.png",
+  "eula": "LICENSE",
+  "readme": "README.md"
+}
