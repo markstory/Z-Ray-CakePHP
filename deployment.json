@@ -1,6 +1,6 @@
 {
-  "name" : "Z-Ray-CakePHP",
-  "display_name" : "Z-Ray-CakePHP",
+  "name" : "CakePHP",
+  "display_name" : "CakePHP",
   "version" : "1.0.0",
   "type": ["zray"],
   "logo": "logo.png",
